@@ -4,6 +4,8 @@
 #include "pthread.h"
 #include "string.h"
 #include "lwip/sockets.h"
+#include "esp_random.h"
+
 
 #define TSC_I2C_ADDR 0x29
 
@@ -29,13 +31,15 @@ typedef struct
 	uint32_t c;
 } sensor_sum_t;
 
+#define DUR_COUNT 4
 typedef struct
 {
-	uint32_t ice;
+	sensor_t all[0];
 	sensor_t sec_30;
 	sensor_t min_1;
 	sensor_t min_3;
 	sensor_t min_9;
+	uint32_t ice;
 } data_avg_t;
 
 #define RING_BUF_SIZE 540
@@ -62,6 +66,7 @@ static void i2csend(i2c_master_dev_handle_t*, const uint8_t) __attribute__((noin
 static uint8_t i2cget(i2c_master_dev_handle_t*) __attribute__((noinline));
 static void sta_ip_assigned_handler(void*, esp_event_base_t, int32_t, void*);
 static void ring_increment(ringbuf_t*, pthread_mutex_t*, const uint32_t) __attribute__((noinline));
+static uint8_t retry(uint8_t*, char*) __attribute__((noinline));
 
 
 void app_main(void)
@@ -126,7 +131,7 @@ void app_main(void)
 	if(ring_data.buf == 0 || ring_buf.buf == 0)
 	{
 		printf("malloc failed\n");
-		vTaskDelay(500 / portTICK_PERIOD_MS);
+		vTaskDelay(UINT16_MAX / portTICK_PERIOD_MS);
 		abort();
 	}
 	memset(ring_buf.buf, 0, sizeof(sensor_t) * RING_BUF_SIZE);
@@ -135,7 +140,7 @@ void app_main(void)
 	pthread_mutex_t mutex_buf, mutex_data;
 	pthread_mutex_init(&mutex_buf, NULL);
 	pthread_mutex_init(&mutex_data, NULL);
-	wifi_sender_arg_t arg = {.ring = &ring_buf, .mutex = &mutex_buf};
+	wifi_sender_arg_t arg = {.ring = &ring_data, .mutex = &mutex_data};
 	ESP_ERROR_CHECK( esp_event_handler_instance_register(IP_EVENT, IP_EVENT_AP_STAIPASSIGNED, sta_ip_assigned_handler, &arg, NULL) );
 	ESP_ERROR_CHECK( esp_wifi_start() );
 
@@ -148,6 +153,7 @@ void app_main(void)
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 		sec++;
 
+		//tsc
 		start = 0b10110100;
 		for(uint8_t i = 0; i < 4; i++)
 		{
@@ -165,6 +171,10 @@ void app_main(void)
 		((sensor_t*)ring_buf.buf)[ring_buf.front].b = rgbc[3];
 		((sensor_t*)ring_buf.buf)[ring_buf.front].c = rgbc[0];
 		
+		//surface
+		//amb
+		//humidity
+
 		if(sec % 30 == 0)
 		{
 			sec = 0;
@@ -205,8 +215,17 @@ out_of_for:
 				else
 					cur--;
 			}
-		
-			//ring_increment(&ring_data, &mutex_data, RING_DATA_SIZE);
+
+			//ice
+
+			uint8_t ice_r;
+			esp_fill_random(&ice_r, 1);
+			if(ice_r % 2 == 0)
+				ice_r = 0;
+			else
+				ice_r = 1;
+
+			((data_avg_t*)ring_data.buf)[ring_data.front].ice = ice_r;
 		
 			//test
 
@@ -225,6 +244,8 @@ out_of_for:
 			printf("\nmin_9:\n");
 			for(uint8_t k = 0; k < 4; k++)
 				printf("%u ",*(((data_avg_t*)ring_data.buf)[ring_data.front].min_9.all+k));
+
+			printf("\nice: %lu",((data_avg_t*)ring_data.buf)[ring_data.front].ice);
 			printf("\n////////\n");
 
 			//
@@ -287,29 +308,33 @@ static void ring_increment(ringbuf_t* ring, pthread_mutex_t* mutex, const uint32
 
 }
 
-
 static void sta_ip_assigned_handler(void* arg, esp_event_base_t base, int32_t id, void* data)
-{
+{	
 	ringbuf_t* ring = ((wifi_sender_arg_t*)arg)->ring;
 	pthread_mutex_t* mutex = ((wifi_sender_arg_t*)arg)->mutex;
 	ip_event_ap_staipassigned_t* info = data;
 
 	char strbuf[17];
 	esp_ip4addr_ntoa(&(info->ip), strbuf, 16);
-	printf("connected ip: %s\n", strbuf);
 
 	int32_t sock, sock_fd; uint8_t try = 0;
+	char* txt;
 	do
 	{
 		sock = socket(AF_INET,SOCK_STREAM, 0);
 		if(sock == -1)
 		{
-			printf("err1 ");
-			goto wait;
+			txt = "err1\0";
+			if(retry(&try, txt))
+				goto exit;
 		}
 	} while (sock == -1);
 	
-	uint8_t opt = 1;
+	int opts = fcntl(sock, F_GETFL, NULL);
+	opts |= O_NONBLOCK;
+	fcntl(sock, F_SETFL, opts);
+
+	const uint32_t opt = 1;
 	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 	setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
 
@@ -318,36 +343,53 @@ static void sta_ip_assigned_handler(void* arg, esp_event_base_t base, int32_t id
 	try = 0;
 	while( bind(sock, &local_addr, sizeof(local_addr)) )
 		{
-			printf("err2 ");
-			goto wait;
+			txt = "err2\0";
+			if(retry(&try, txt))
+				goto exit_sock;
 		}
 	
 	try = 0;
 	while( listen(sock, 1) )
 		{
-			printf("err3 ");
-			goto wait;
+			txt = "err3\0";
+			if(retry(&try, txt))
+				goto exit_sock;
 		}
 
-	printf("waiting for connection...\n");
 	struct sockaddr_in peer_addr;
 	socklen_t peer_addr_len = sizeof(peer_addr);
+
+	try = 0;
 	do
 	{
 		sock_fd = accept(sock, &peer_addr, &peer_addr_len);
 		if(sock_fd == -1)
-			goto wait;
+		{
+			int accept_ret = errno;
+			if(accept_ret == EAGAIN)
+				txt = "EAGAIN\0";
+			else
+				txt = "err4\0";
+			if(retry(&try, txt))
+				goto exit_sock;
+		}
 	} while (sock_fd == -1);
+	printf("accepted\n");
 
-	char sendbuf[100] = {0};
+	char sendbuf[(SENSOR_COUNT * DUR_COUNT * 7) + 10] = {0};
 	pthread_mutex_lock(mutex);
+
 	while(ring->back != ring->front || ring->full)
 	{
 		pthread_mutex_unlock(mutex);
+		
 		uint8_t send_len = 0;
-		send_len += sprintf(sendbuf, "(wifi handler) [%lu] ", ring->back);
-		for(uint8_t i = 0; i < SENSOR_COUNT; i++)
-			send_len += sprintf(sendbuf+send_len, "%u%s", *(((sensor_t*)ring->buf)[ring->back].all+i), ((i < (SENSOR_COUNT - 1))? ", " : "\n") );
+//		send_len += sprintf(sendbuf, "(wifi handler) [%lu] \n", ring->back);
+		for(uint8_t duration = 0; duration < DUR_COUNT; duration++)
+			for(uint8_t sensor = 0; sensor < SENSOR_COUNT; sensor++)
+				send_len += sprintf(sendbuf+send_len, "%u, ", *((*(((data_avg_t*)ring->buf)[ring->back].all+duration)).all+sensor) /*, ((sensor != (SENSOR_COUNT - 1) || duration != (DUR_COUNT - 1))? ", " : "\n")*/ );
+
+		send_len += sprintf(sendbuf+send_len, "%lu\n", ((data_avg_t*)ring->buf)[ring->back].ice);
 
 		int16_t send_len_ret = send(sock_fd, sendbuf, send_len, MSG_MORE);
 		assert(send_len_ret == send_len);
@@ -355,23 +397,35 @@ static void sta_ip_assigned_handler(void* arg, esp_event_base_t base, int32_t id
 		ring->back = (ring->back + 1) % RING_BUF_SIZE;
 		if(ring->full) ring->full = 0;
 	}
+	
 	pthread_mutex_unlock(mutex);
-	char dot = '.';
-	send(sock_fd, &dot, 1, 0);
+	
+	char* dot = "\n.";
+	send(sock_fd, dot, 2, 0);
+	
 	close(sock_fd);
+
+exit_sock:
 	close(sock);
+
+exit:
+	ESP_ERROR_CHECK( esp_wifi_deauth_sta(0) );
+	ESP_ERROR_CHECK( esp_wifi_stop() );
+	vTaskDelay(1);
+	ESP_ERROR_CHECK( esp_wifi_start() );
 	return;
-
-
-wait:
-	if(try++ == 3)
-				{
-					printf("aborting\n");
-					return;
-				}
-				
-				printf("socket error\n");
-				vTaskDelay(1000 / portTICK_PERIOD_MS);
-
 }
 
+uint8_t retry(uint8_t* try, char* text)
+{
+
+	if((*try)++ == 10)
+	{
+		printf("aborting\n");
+		return 1;
+	}
+		
+	printf("%s\n",text);
+	vTaskDelay(1000 / portTICK_PERIOD_MS);
+	return 0;
+}
