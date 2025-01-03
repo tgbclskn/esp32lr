@@ -5,30 +5,38 @@
 #include "string.h"
 #include "lwip/sockets.h"
 #include "esp_random.h"
-
+#include "dht11/dht11.c"
+#include "Logistic-Regression/regression/logistic.c"
+#include "Logistic-Regression/numerical/matrix.c"
+#include "Logistic-Regression/preprocessing/scaler.c"
 
 #define TSC_I2C_ADDR 0x29
 
 #define SENSOR_COUNT 4
 typedef struct
 {
-	uint16_t all[0];
-	//uint8_t surface_temp;
-	//uint8_t amb_temp;
-	//uint8_t humidity;
-	uint16_t r;
-	uint16_t g;
-	uint16_t b;
-	uint16_t c;
+	uint8_t all[0];
+	//uint16_t r;
+	//uint16_t g;
+	//uint16_t b;
+	//uint16_t c;
+	uint8_t surf_temp;
+	uint8_t surf_humid;
+	uint8_t amb_temp;
+	uint8_t amb_humid;
 } sensor_t;
 
 typedef struct
 {
 	uint32_t all[0];
-	uint32_t r;
-	uint32_t g;
-	uint32_t b;
-	uint32_t c;
+	//uint32_t r;
+	//uint32_t g;
+	//uint32_t b;
+	//uint32_t c;
+	uint32_t surf_temp;
+	uint32_t surf_humid;
+	uint32_t amb_temp;
+	uint32_t amb_humid;
 } sensor_sum_t;
 
 #define DUR_COUNT 4
@@ -59,19 +67,29 @@ typedef struct
 	pthread_mutex_t* mutex;
 } wifi_sender_arg_t;
 
+volatile uint8_t DRAM_ATTR buttonpressed = 0;
 
-static void i2c_add_dev(i2c_master_bus_handle_t, i2c_master_dev_handle_t*, const uint8_t) __attribute__((noinline));
+
+/*static void i2c_add_dev(i2c_master_bus_handle_t, i2c_master_dev_handle_t*, const uint8_t) __attribute__((noinline));
 static void i2csend_and_check(i2c_master_dev_handle_t*, const uint8_t) __attribute__((noinline));
 static void i2csend(i2c_master_dev_handle_t*, const uint8_t) __attribute__((noinline));
-static uint8_t i2cget(i2c_master_dev_handle_t*) __attribute__((noinline));
+static uint8_t i2cget(i2c_master_dev_handle_t*) __attribute__((noinline));*/
 static void sta_ip_assigned_handler(void*, esp_event_base_t, int32_t, void*);
 static void ring_increment(ringbuf_t*, pthread_mutex_t*, const uint32_t) __attribute__((noinline));
 static uint8_t retry(uint8_t*, char*) __attribute__((noinline));
+static void f_buttonpressed(void*);
 
+#define BUTTON_PIN GPIO_NUM_18
 
 void app_main(void)
 {
-    i2c_master_bus_handle_t bus_handler;
+	gpio_set_direction(BUTTON_PIN, GPIO_MODE_INPUT);
+	gpio_set_pull_mode(BUTTON_PIN, GPIO_PULLUP_ONLY);
+	TaskHandle_t f_buttonpressed_taskhandle;
+	xTaskCreate(f_buttonpressed, "buttontask", configMINIMAL_STACK_SIZE * 2, NULL, uxTaskPriorityGet(NULL), &f_buttonpressed_taskhandle);
+
+
+    /*i2c_master_bus_handle_t bus_handler;
 
 	i2c_master_bus_config_t mbc = {
 			.i2c_port = -1,
@@ -80,24 +98,27 @@ void app_main(void)
 			.clk_source = I2C_CLK_SRC_DEFAULT,
 			.glitch_ignore_cnt = 7,
 			.flags.enable_internal_pullup = true
-	};
+	};*/
 
-	ESP_ERROR_CHECK( i2c_new_master_bus(&mbc, &bus_handler) );
+	//ESP_ERROR_CHECK( i2c_new_master_bus(&mbc, &bus_handler) );
 
-	i2c_master_dev_handle_t tsc;
-	i2c_add_dev(bus_handler, &tsc, TSC_I2C_ADDR);
+	//i2c_master_dev_handle_t tsc;
+	//i2c_add_dev(bus_handler, &tsc, TSC_I2C_ADDR);
 
-	ESP_ERROR_CHECK( i2c_master_bus_reset(bus_handler) );
+	//ESP_ERROR_CHECK( i2c_master_bus_reset(bus_handler) );
 	
-	ESP_ERROR_CHECK( i2c_master_probe(bus_handler, TSC_I2C_ADDR, -1) );
+	//ESP_ERROR_CHECK( i2c_master_probe(bus_handler, TSC_I2C_ADDR, -1) );
 	
-	i2csend(&tsc, 0b10001111); // select GAIN
-	i2csend_and_check(&tsc, 0x00); // 1X
+	//i2csend(&tsc, 0b10001111); // select GAIN
+	//i2csend_and_check(&tsc, 0x00); // 1X
 	
-	i2csend(&tsc, 0b10000000); // select EN
-	i2csend_and_check(&tsc, 0b00001011); // PON + WEN + AEN
+	//i2csend(&tsc, 0b10000000); // select EN
+	//i2csend_and_check(&tsc, 0b00001011); // PON + WEN + AEN
 
+
+	//wifi & alloc
 	
+
 	ESP_ERROR_CHECK( esp_netif_init() );
 	ESP_ERROR_CHECK( esp_event_loop_create_default() );
 	esp_netif_create_default_wifi_ap();
@@ -120,13 +141,16 @@ void app_main(void)
 
     ESP_ERROR_CHECK( esp_wifi_set_config(WIFI_IF_AP, &ap_config) );
 	
-	//sensor_data_t* sensor_data = malloc(sizeof(sensor_data_t));
-	//ringbuf_t* ring = malloc(sizeof(ringbuf_t));
 	ringbuf_t ring_buf, ring_data;
 	memset(&ring_buf, 0, sizeof(ringbuf_t));
 	memset(&ring_data, 0, sizeof(ringbuf_t));
+	heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
 	ring_buf.buf = malloc(sizeof(sensor_t) * RING_BUF_SIZE);
+	heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
+
 	ring_data.buf = malloc(sizeof(data_avg_t) * RING_DATA_SIZE);
+	heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
+
 
 	if(ring_data.buf == 0 || ring_buf.buf == 0)
 	{
@@ -145,8 +169,54 @@ void app_main(void)
 	ESP_ERROR_CHECK( esp_wifi_start() );
 
 
-	uint16_t sec = 0, rgbc[4];
-	uint8_t start;
+	//dht surf + amb
+
+	
+	struct dht11_reading dht11_surf, dht11_amb, dht11_surf_old, dht11_amb_old;
+	#define DHT11_SURF_PIN 32
+	#define DHT11_AMB_PIN 33
+	#define DHT11_SURF 0
+	#define DHT11_AMB 1
+	DHT11_init((gpio_num_t[]){DHT11_SURF_PIN, DHT11_AMB_PIN}, 2);
+	usleep(10*1000);
+
+	double ss_mean[] = {30.804878, 44.795122};
+	double ss_std[] = {2.022067, 23.898504};
+	const StandardScaler ss = {.mean = ss_mean, .std = ss_std};
+	Matrix W = zeros(2, 1);
+	Matrix b = zeros(1, 1);
+	
+	
+	W.data[0][0] = 0.56;
+	W.data[1][0] = 1.27;
+	b.data[0][0] = -2.39;
+
+	const Model trained_model = {.ss = ss, .W = W, .b = b};
+	Matrix inmatrix = zeros(1,2);
+
+	/*while(1)
+	{
+		dht11_surf = DHT11_read(DHT11_SURF);
+		dht11_amb = DHT11_read(DHT11_AMB);
+		usleep(1000 * 2100);
+		inmatrix.data[0][0] = (double)dht11_surf.temperature;
+		inmatrix.data[0][1] = (double)dht11_surf.humidity;
+		const Matrix surf_predict = predict(trained_model, inmatrix);
+		inmatrix.data[0][0] = (double)dht11_amb.temperature;
+		inmatrix.data[0][1] = (double)dht11_amb.humidity;
+		const Matrix amb_predict = predict(trained_model, inmatrix);
+		printf("surf temp:%u humid:%u predict:%lf\n",dht11_surf.temperature,dht11_surf.humidity, surf_predict.data[0][0]);
+		printf("amb temp:%u humid:%u predict:%lf\n",dht11_amb.temperature,dht11_amb.humidity, amb_predict.data[0][0]);
+		printf("pressed:%u\n",buttonpressed);
+		dispose(surf_predict);
+		dispose(amb_predict);
+	}
+
+	return;*/
+	
+	
+	uint16_t sec = 0 /*, rgbc[4]*/;
+	uint8_t start, icepresent = 0;
 
 	for(; ;)
 	{
@@ -154,7 +224,7 @@ void app_main(void)
 		sec++;
 
 		//tsc
-		start = 0b10110100;
+		/*start = 0b10110100;
 		for(uint8_t i = 0; i < 4; i++)
 		{
 			i2csend(&tsc, start++);
@@ -169,11 +239,33 @@ void app_main(void)
 		((sensor_t*)ring_buf.buf)[ring_buf.front].r = rgbc[1];
 		((sensor_t*)ring_buf.buf)[ring_buf.front].g = rgbc[2];
 		((sensor_t*)ring_buf.buf)[ring_buf.front].b = rgbc[3];
-		((sensor_t*)ring_buf.buf)[ring_buf.front].c = rgbc[0];
+		((sensor_t*)ring_buf.buf)[ring_buf.front].c = rgbc[0];*/
 		
-		//surface
-		//amb
-		//humidity
+		
+		dht11_surf = DHT11_read(DHT11_SURF);
+		dht11_amb = DHT11_read(DHT11_AMB);
+		while(dht11_surf.temperature < 0)
+		{
+			printf("dht11_surf val err\n");
+			usleep(1000 * 1000);
+			dht11_surf = DHT11_read(DHT11_SURF);
+		}
+		
+		while(dht11_amb.temperature < 0)
+		{
+			printf("dht11_amb val err\n");
+			usleep(1000 * 1000);
+			dht11_amb = DHT11_read(DHT11_AMB);
+		
+		}
+
+		printf("========\n%03u,%03u %03u,%03u ice:%u\n", dht11_surf.temperature, dht11_surf.humidity, dht11_amb.temperature, dht11_amb.humidity, icepresent);
+		
+		((sensor_t*)ring_buf.buf)[ring_buf.front].surf_temp = dht11_surf.temperature;
+		((sensor_t*)ring_buf.buf)[ring_buf.front].surf_humid = dht11_surf.humidity;
+		((sensor_t*)ring_buf.buf)[ring_buf.front].amb_temp = dht11_amb.temperature;
+		((sensor_t*)ring_buf.buf)[ring_buf.front].amb_humid = dht11_amb.humidity;
+		
 
 		if(sec % 30 == 0)
 		{
@@ -206,10 +298,14 @@ void app_main(void)
 				}
 
 out_of_for:	
-				sum.r += ((sensor_t*)ring_buf.buf)[cur].r;
+				/*sum.r += ((sensor_t*)ring_buf.buf)[cur].r;
 				sum.g += ((sensor_t*)ring_buf.buf)[cur].g;
 				sum.b += ((sensor_t*)ring_buf.buf)[cur].b;
-				sum.c += ((sensor_t*)ring_buf.buf)[cur].c;
+				sum.c += ((sensor_t*)ring_buf.buf)[cur].c;*/
+				sum.surf_temp += ((sensor_t*)ring_buf.buf)[cur].surf_temp;
+				sum.surf_humid += ((sensor_t*)ring_buf.buf)[cur].surf_humid;
+				sum.amb_temp += ((sensor_t*)ring_buf.buf)[cur].amb_temp;
+				sum.amb_humid += ((sensor_t*)ring_buf.buf)[cur].amb_humid;
 				if(cur == 0)
 					cur = RING_BUF_SIZE-1;
 				else
@@ -218,14 +314,41 @@ out_of_for:
 
 			//ice
 
-			uint8_t ice_r;
+			if(buttonpressed)
+			{
+				buttonpressed = 0;
+				if(icepresent)
+					icepresent = 0;
+				else
+				{
+					if(ring_data.front-ring_data.back < 6)
+						printf("no backwards\n");
+					else
+					{
+						uint16_t tmpcur = ring_data.front;
+						for(uint8_t i = 0; i < 6; i++)
+						{
+							((data_avg_t*)ring_data.buf)[tmpcur].ice = 1;
+							if(tmpcur-- == 0) tmpcur = RING_DATA_SIZE - 1;
+						}
+					}
+					icepresent = 1;
+				}
+			}
+
+			if(icepresent)
+				((data_avg_t*)ring_data.buf)[ring_data.front].ice = 1;
+			else
+				((data_avg_t*)ring_data.buf)[ring_data.front].ice = 0;
+
+			/*uint8_t ice_r;
 			esp_fill_random(&ice_r, 1);
 			if(ice_r % 2 == 0)
 				ice_r = 0;
 			else
 				ice_r = 1;
 
-			((data_avg_t*)ring_data.buf)[ring_data.front].ice = ice_r;
+			((data_avg_t*)ring_data.buf)[ring_data.front].ice = ice_r;*/
 		
 			//test
 
@@ -256,12 +379,22 @@ out_of_for:
 
 		ring_increment(&ring_buf, &mutex_buf, RING_BUF_SIZE);
 
+		inmatrix.data[0][0] = (double)dht11_surf.temperature;
+		inmatrix.data[0][1] = (double)dht11_surf.humidity;
+		const Matrix surf_predict = predict(trained_model, inmatrix);
+		inmatrix.data[0][0] = (double)dht11_amb.temperature;
+		inmatrix.data[0][1] = (double)dht11_amb.humidity;
+		const Matrix amb_predict = predict(trained_model, inmatrix);
+		printf("surf predict:%u amb predict:%u\n========\n",(uint8_t)surf_predict.data[0][0],(uint8_t)amb_predict.data[0][0]);
+		dispose(surf_predict);
+		dispose(amb_predict);
+
 	}
 	
 
 }
 
-static void i2c_add_dev(i2c_master_bus_handle_t bus_handler, i2c_master_dev_handle_t *dev_handler, const uint8_t addr)
+/*static void i2c_add_dev(i2c_master_bus_handle_t bus_handler, i2c_master_dev_handle_t *dev_handler, const uint8_t addr)
 {
 	i2c_device_config_t devcfg = {
     .dev_addr_length = I2C_ADDR_BIT_LEN_7,
@@ -294,7 +427,7 @@ static void i2csend_and_check(i2c_master_dev_handle_t* tsc, const uint8_t mes)
 		vTaskDelay(100000 / portTICK_PERIOD_MS);
 		abort();
 	}
-}
+}*/
 
 static void ring_increment(ringbuf_t* ring, pthread_mutex_t* mutex, const uint32_t size)
 {
@@ -341,7 +474,7 @@ static void sta_ip_assigned_handler(void* arg, esp_event_base_t base, int32_t id
 	struct sockaddr_in local_addr = {.sin_family = AF_INET, .sin_addr.s_addr = INADDR_ANY, .sin_port = htons(31000)};
 
 	try = 0;
-	while( bind(sock, &local_addr, sizeof(local_addr)) )
+	while( bind(sock, (struct sockaddr*)&local_addr, sizeof(local_addr)) )
 		{
 			txt = "err2\0";
 			if(retry(&try, txt))
@@ -362,7 +495,7 @@ static void sta_ip_assigned_handler(void* arg, esp_event_base_t base, int32_t id
 	try = 0;
 	do
 	{
-		sock_fd = accept(sock, &peer_addr, &peer_addr_len);
+		sock_fd = accept(sock, (struct sockaddr*)&peer_addr, &peer_addr_len);
 		if(sock_fd == -1)
 		{
 			int accept_ret = errno;
@@ -428,4 +561,14 @@ uint8_t retry(uint8_t* try, char* text)
 	printf("%s\n",text);
 	vTaskDelay(1000 / portTICK_PERIOD_MS);
 	return 0;
+}
+
+void f_buttonpressed(void* p)
+{
+	for(; ;)
+	{
+		if(buttonpressed == 0)
+			if(gpio_get_level(BUTTON_PIN) == 0) buttonpressed = 1;
+		usleep(1000 * 125);
+	}
 }
