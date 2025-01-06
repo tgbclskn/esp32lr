@@ -24,6 +24,7 @@
 
 #ifndef DHT11_H_
 #define DHT11_H_
+#include <stdint.h>
 
 //#include "driver/gpio.h"
 
@@ -39,8 +40,8 @@ struct dht11_reading {
     int8_t humidity;
 };
 
-void DHT11_init(uint8_t[], uint8_t);
+void DHT11_init(uint8_t gpio_num[], uint8_t count);
 
-struct dht11_reading DHT11_read(uint8_t);
+struct dht11_reading DHT11_read(uint8_t select);
 
 #endif

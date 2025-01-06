@@ -1,0 +1,661 @@
+CBMC version 6.4.1 (cbmc-6.4.1) 64-bit x86_64 linux
+Type-checking main
+Generating GOTO Program
+Adding CPROVER library (x86_64)
+Removal of function pointers and virtual functions
+Generic Property Instrumentation
+Removing unused functions
+Dropping 10 of 26 functions (16 used)
+Running with 8 object bits, 56 offset bits (default)
+Starting Bounded Model Checking
+Unwinding loop DHT11_init.0 iteration 1 file dht11/dht11.c line 100 function DHT11_init thread 0
+Unwinding loop DHT11_init.0 iteration 2 file dht11/dht11.c line 100 function DHT11_init thread 0
+Unwinding loop app_main.0 iteration 1 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 2 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 3 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 4 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 5 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 6 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 7 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 8 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 9 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 10 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 11 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 12 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 13 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 14 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 15 file main.c line 90 function app_main thread 0
+Unwinding loop app_main.0 iteration 16 file main.c line 90 function app_main thread 0
+Runtime Symex: 76.1955s
+size of program expression: 170681 steps
+simple slicing removed 1 assignments
+Generated 13527 VCC(s), 6509 remaining after simplification
+Runtime Postprocess Equation: 15.4133s
+Passing problem to propositional reduction
+converting SSA
+Runtime Convert SSA: 7.91509s
+Running propositional reduction
+Runtime Post-process: 0.0100972s
+3351892 variables, 11222953 clauses
+SAT checker: instance is UNSATISFIABLE
+Runtime Solver: 69.6281s
+Runtime decision procedure: 77.587s
+
+** Results:
+function __CPROVER__start
+[__CPROVER__start.memory-leak.1] dynamically allocated memory never freed in __CPROVER_memory_leak == NULL: SUCCESS
+
+<builtin-library-free> function free
+[free.overflow.1] line 19 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+[free.overflow.3] line 19 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+[free.overflow.5] line 19 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+[free.overflow.2] line 23 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+[free.overflow.4] line 23 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+[free.overflow.6] line 23 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+
+<builtin-library-malloc> function malloc
+[malloc.assertion.1] line 31 max allocation size exceeded: SUCCESS
+[malloc.assertion.2] line 36 max allocation may fail: SUCCESS
+
+<builtin-library-memset> function memset
+[memset.overflow.1] line 32 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+[memset.overflow.2] line 36 arithmetic overflow on unsigned to signed type conversion in (signed long int)n: SUCCESS
+[memset.overflow.3] line 36 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)(signed long int)n: SUCCESS
+
+dht11/dht11.c function DHT11_init
+[DHT11_init.pointer_primitives.1] line 89 pointer invalid in R_OK(gpio_num, (unsigned long int)count): SUCCESS
+[DHT11_init.pointer_primitives.2] line 89 deallocated dynamic object in R_OK(gpio_num, (unsigned long int)count): SUCCESS
+[DHT11_init.pointer_primitives.3] line 89 dead object in R_OK(gpio_num, (unsigned long int)count): SUCCESS
+[DHT11_init.pointer_primitives.4] line 89 pointer outside object bounds in R_OK(gpio_num, (unsigned long int)count): SUCCESS
+[DHT11_init.pointer_primitives.5] line 89 invalid integer address in R_OK(gpio_num, (unsigned long int)count): SUCCESS
+[DHT11_init.overflow.1] line 91 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)2: SUCCESS
+[DHT11_init.overflow.2] line 91 arithmetic overflow on unsigned * in (unsigned long int)2 * sizeof(dht_arr_t) /*24ul*/ : SUCCESS
+[DHT11_init.overflow.3] line 91 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)2: SUCCESS
+[DHT11_init.overflow.4] line 91 arithmetic overflow on unsigned * in (unsigned long int)2 * sizeof(dht_arr_t) /*24ul*/ : SUCCESS
+[DHT11_init.precondition_instance.1] line 91 memset destination region writeable: SUCCESS
+[DHT11_init.overflow.5] line 100 arithmetic overflow on signed to unsigned type conversion in (uint8_t)0: SUCCESS
+[DHT11_init.overflow.8] line 100 arithmetic overflow on unsigned + in i + 1: SUCCESS
+[DHT11_init.overflow.6] line 101 arithmetic overflow on signed * in (signed long int)i * (signed long int)24ul: SUCCESS
+[DHT11_init.overflow.7] line 101 arithmetic overflow on signed * in (signed long int)i * (signed long int)1ul: SUCCESS
+[DHT11_init.pointer_arithmetic.1] line 101 pointer arithmetic: pointer NULL in dht_arr + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.2] line 101 pointer arithmetic: pointer invalid in dht_arr + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.3] line 101 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.4] line 101 pointer arithmetic: dead object in dht_arr + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.5] line 101 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.6] line 101 pointer arithmetic: invalid integer address in dht_arr + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.7] line 101 pointer arithmetic: pointer NULL in gpio_num + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.8] line 101 pointer arithmetic: pointer invalid in gpio_num + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.9] line 101 pointer arithmetic: deallocated dynamic object in gpio_num + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.10] line 101 pointer arithmetic: dead object in gpio_num + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.11] line 101 pointer arithmetic: pointer outside object bounds in gpio_num + (signed long int)i: SUCCESS
+[DHT11_init.pointer_arithmetic.12] line 101 pointer arithmetic: invalid integer address in gpio_num + (signed long int)i: SUCCESS
+[DHT11_init.pointer_dereference.1] line 101 dereference failure: pointer NULL in (dht_arr + (signed long int)i)->dht_gpio: SUCCESS
+[DHT11_init.pointer_dereference.2] line 101 dereference failure: pointer invalid in (dht_arr + (signed long int)i)->dht_gpio: SUCCESS
+[DHT11_init.pointer_dereference.3] line 101 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)i)->dht_gpio: SUCCESS
+[DHT11_init.pointer_dereference.4] line 101 dereference failure: dead object in (dht_arr + (signed long int)i)->dht_gpio: SUCCESS
+[DHT11_init.pointer_dereference.5] line 101 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)i)->dht_gpio: SUCCESS
+[DHT11_init.pointer_dereference.6] line 101 dereference failure: invalid integer address in (dht_arr + (signed long int)i)->dht_gpio: SUCCESS
+[DHT11_init.pointer_dereference.7] line 101 dereference failure: pointer NULL in gpio_num[(signed long int)i]: SUCCESS
+[DHT11_init.pointer_dereference.8] line 101 dereference failure: pointer invalid in gpio_num[(signed long int)i]: SUCCESS
+[DHT11_init.pointer_dereference.9] line 101 dereference failure: deallocated dynamic object in gpio_num[(signed long int)i]: SUCCESS
+[DHT11_init.pointer_dereference.10] line 101 dereference failure: dead object in gpio_num[(signed long int)i]: SUCCESS
+[DHT11_init.pointer_dereference.11] line 101 dereference failure: pointer outside object bounds in gpio_num[(signed long int)i]: SUCCESS
+[DHT11_init.pointer_dereference.12] line 101 dereference failure: invalid integer address in gpio_num[(signed long int)i]: SUCCESS
+
+dht11/dht11.c function DHT11_read
+[DHT11_read.overflow.1] line 114 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.pointer_arithmetic.1] line 114 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.2] line 114 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.3] line 114 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.4] line 114 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.5] line 114 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.6] line 114 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.1] line 114 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.2] line 114 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.3] line 114 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.4] line 114 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.5] line 114 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.6] line 114 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.overflow.2] line 116 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.pointer_arithmetic.7] line 116 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.8] line 116 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.9] line 116 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.10] line 116 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.11] line 116 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.12] line 116 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.7] line 116 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.8] line 116 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.9] line 116 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.10] line 116 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.11] line 116 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.12] line 116 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.overflow.3] line 117 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.pointer_arithmetic.13] line 117 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.14] line 117 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.15] line 117 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.16] line 117 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.17] line 117 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.18] line 117 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.13] line 117 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.14] line 117 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.15] line 117 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.16] line 117 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.17] line 117 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.pointer_dereference.18] line 117 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read_time: SUCCESS
+[DHT11_read.overflow.4] line 119 arithmetic overflow on signed to unsigned type conversion in (uint8_t)0: SUCCESS
+[DHT11_read.overflow.5] line 122 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.pointer_arithmetic.19] line 122 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.20] line 122 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.21] line 122 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.22] line 122 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.23] line 122 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.24] line 122 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.19] line 122 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.20] line 122 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.21] line 122 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.22] line 122 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.23] line 122 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.24] line 122 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.overflow.6] line 125 arithmetic overflow on signed to unsigned type conversion in (uint16_t)50: SUCCESS
+[DHT11_read.overflow.7] line 126 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.pointer_arithmetic.25] line 126 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.26] line 126 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.27] line 126 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.28] line 126 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.29] line 126 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.30] line 126 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.25] line 126 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.26] line 126 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.27] line 126 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.28] line 126 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.29] line 126 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.30] line 126 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.assertion.1] line 128 assertion havoc_slice W_OK((void *)data, (__CPROVER_size_t)5): SUCCESS
+[DHT11_read.overflow.8] line 128 arithmetic overflow on signed to unsigned type conversion in (__CPROVER_size_t)5: SUCCESS
+[DHT11_read.overflow.9] line 131 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.overflow.10] line 131 arithmetic overflow on signed type conversion in (int8_t)0: SUCCESS
+[DHT11_read.pointer_arithmetic.31] line 131 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.32] line 131 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.33] line 131 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.34] line 131 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.35] line 131 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.36] line 131 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.31] line 131 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.32] line 131 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.33] line 131 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.34] line 131 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.35] line 131 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.36] line 131 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.array_bounds.1] line 132 array 'data' lower bound in data[(signed long int)2]: SUCCESS
+[DHT11_read.array_bounds.2] line 132 array 'data' lower bound in data[(signed long int)2]: SUCCESS
+[DHT11_read.overflow.11] line 132 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.overflow.12] line 132 arithmetic overflow on signed type conversion in (int8_t)((signed int)data[(signed long int)2] >= 128 ? 127 : (signed int)data[(signed long int)2]): SUCCESS
+[DHT11_read.pointer_arithmetic.37] line 132 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.38] line 132 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.39] line 132 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.40] line 132 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.41] line 132 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.42] line 132 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.37] line 132 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.38] line 132 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.39] line 132 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.40] line 132 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.41] line 132 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.42] line 132 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.array_bounds.3] line 133 array 'data' lower bound in data[(signed long int)0]: SUCCESS
+[DHT11_read.array_bounds.4] line 133 array 'data' lower bound in data[(signed long int)0]: SUCCESS
+[DHT11_read.overflow.13] line 133 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.overflow.14] line 133 arithmetic overflow on signed type conversion in (int8_t)((signed int)data[(signed long int)0] >= 128 ? 127 : (signed int)data[(signed long int)0]): SUCCESS
+[DHT11_read.pointer_arithmetic.43] line 133 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.44] line 133 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.45] line 133 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.46] line 133 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.47] line 133 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.48] line 133 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.43] line 133 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.44] line 133 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.45] line 133 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.46] line 133 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.47] line 133 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.48] line 133 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.overflow.15] line 134 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.pointer_arithmetic.49] line 134 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.50] line 134 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.51] line 134 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.52] line 134 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.53] line 134 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.54] line 134 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.49] line 134 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.50] line 134 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.51] line 134 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.52] line 134 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.53] line 134 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.54] line 134 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.overflow.16] line 136 arithmetic overflow on signed * in (signed long int)select * (signed long int)24ul: SUCCESS
+[DHT11_read.pointer_arithmetic.55] line 136 pointer arithmetic: pointer NULL in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.56] line 136 pointer arithmetic: pointer invalid in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.57] line 136 pointer arithmetic: deallocated dynamic object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.58] line 136 pointer arithmetic: dead object in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.59] line 136 pointer arithmetic: pointer outside object bounds in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_arithmetic.60] line 136 pointer arithmetic: invalid integer address in dht_arr + (signed long int)select: SUCCESS
+[DHT11_read.pointer_dereference.55] line 136 dereference failure: pointer NULL in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.56] line 136 dereference failure: pointer invalid in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.57] line 136 dereference failure: deallocated dynamic object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.58] line 136 dereference failure: dead object in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.59] line 136 dereference failure: pointer outside object bounds in (dht_arr + (signed long int)select)->last_read: SUCCESS
+[DHT11_read.pointer_dereference.60] line 136 dereference failure: invalid integer address in (dht_arr + (signed long int)select)->last_read: SUCCESS
+
+dht11/dht11.c function _crcError
+[_crcError.overflow.1] line 83 arithmetic overflow on signed type conversion in (int8_t)-2: SUCCESS
+[_crcError.overflow.2] line 83 arithmetic overflow on signed unary minus in -1: SUCCESS
+[_crcError.overflow.3] line 83 arithmetic overflow on signed type conversion in (int8_t)-1: SUCCESS
+
+dht11/dht11.c function _timeoutError
+[_timeoutError.overflow.1] line 78 arithmetic overflow on signed type conversion in (int8_t)-1: SUCCESS
+[_timeoutError.overflow.2] line 78 arithmetic overflow on signed unary minus in -1: SUCCESS
+[_timeoutError.overflow.3] line 78 arithmetic overflow on signed type conversion in (int8_t)-1: SUCCESS
+
+main.c function app_main
+[app_main.assertion.1] line 54 assertion havoc_slice W_OK((void *)&ring_buf, sizeof(ringbuf_t) /*24ul*/ ): SUCCESS
+[app_main.assertion.2] line 55 assertion havoc_slice W_OK((void *)&ring_data, sizeof(ringbuf_t) /*24ul*/ ): SUCCESS
+[app_main.overflow.1] line 57 arithmetic overflow on signed to unsigned type conversion in (unsigned int)2: SUCCESS
+[app_main.overflow.2] line 57 arithmetic overflow on signed to unsigned type conversion in (unsigned int)2: SUCCESS
+[app_main.overflow.3] line 57 arithmetic overflow on signed to unsigned type conversion in (unsigned int)2: SUCCESS
+[app_main.overflow.4] line 57 arithmetic overflow on signed to unsigned type conversion in (unsigned int)2: SUCCESS
+[app_main.overflow.5] line 58 arithmetic overflow on signed to unsigned type conversion in (unsigned int)1: SUCCESS
+[app_main.overflow.6] line 58 arithmetic overflow on signed to unsigned type conversion in (unsigned int)1: SUCCESS
+[app_main.overflow.7] line 59 arithmetic overflow on signed to unsigned type conversion in (unsigned int)1: SUCCESS
+[app_main.overflow.8] line 59 arithmetic overflow on signed to unsigned type conversion in (unsigned int)1: SUCCESS
+[app_main.overflow.9] line 60 arithmetic overflow on signed to unsigned type conversion in (unsigned int)14: SUCCESS
+[app_main.overflow.10] line 61 arithmetic overflow on signed to unsigned type conversion in (unsigned int)8: SUCCESS
+[app_main.overflow.11] line 62 arithmetic overflow on signed to unsigned type conversion in (unsigned int)14: SUCCESS
+[app_main.overflow.12] line 63 arithmetic overflow on signed to unsigned type conversion in (unsigned int)8: SUCCESS
+[app_main.overflow.13] line 64 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)8: SUCCESS
+[app_main.overflow.14] line 64 arithmetic overflow on unsigned * in sizeof(sensor_t) /*4ul*/  * (unsigned long int)8: SUCCESS
+[app_main.overflow.15] line 66 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)14: SUCCESS
+[app_main.overflow.16] line 66 arithmetic overflow on unsigned * in sizeof(data_avg_t) /*20ul*/  * (unsigned long int)14: SUCCESS
+[app_main.precondition_instance.1] line 69 free argument must be NULL or valid pointer: SUCCESS
+[app_main.precondition_instance.2] line 69 free argument must be dynamic object: SUCCESS
+[app_main.precondition_instance.3] line 69 free argument has offset zero: SUCCESS
+[app_main.precondition_instance.4] line 69 double free: SUCCESS
+[app_main.precondition_instance.5] line 69 free called for new[] object: SUCCESS
+[app_main.precondition_instance.6] line 69 free called for stack-allocated object: SUCCESS
+[app_main.assertion.3] line 75 ring_buf.buf rw: SUCCESS
+[app_main.overflow.17] line 75 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)8: SUCCESS
+[app_main.overflow.18] line 75 arithmetic overflow on unsigned * in sizeof(sensor_t) /*4ul*/  * (unsigned long int)8: SUCCESS
+[app_main.pointer_primitives.1] line 75 pointer invalid in RW_OK(ring_buf.buf, sizeof(sensor_t) /*4ul*/  * (unsigned long int)8): SUCCESS
+[app_main.pointer_primitives.2] line 75 deallocated dynamic object in RW_OK(ring_buf.buf, sizeof(sensor_t) /*4ul*/  * (unsigned long int)8): SUCCESS
+[app_main.pointer_primitives.3] line 75 dead object in RW_OK(ring_buf.buf, sizeof(sensor_t) /*4ul*/  * (unsigned long int)8): SUCCESS
+[app_main.pointer_primitives.4] line 75 pointer outside object bounds in RW_OK(ring_buf.buf, sizeof(sensor_t) /*4ul*/  * (unsigned long int)8): SUCCESS
+[app_main.pointer_primitives.5] line 75 invalid integer address in RW_OK(ring_buf.buf, sizeof(sensor_t) /*4ul*/  * (unsigned long int)8): SUCCESS
+[app_main.assertion.4] line 76 ring_data.buf rw: SUCCESS
+[app_main.overflow.19] line 76 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)14: SUCCESS
+[app_main.overflow.20] line 76 arithmetic overflow on unsigned * in sizeof(data_avg_t) /*20ul*/  * (unsigned long int)14: SUCCESS
+[app_main.pointer_primitives.6] line 76 pointer invalid in RW_OK(ring_data.buf, sizeof(data_avg_t) /*20ul*/  * (unsigned long int)14): SUCCESS
+[app_main.pointer_primitives.7] line 76 deallocated dynamic object in RW_OK(ring_data.buf, sizeof(data_avg_t) /*20ul*/  * (unsigned long int)14): SUCCESS
+[app_main.pointer_primitives.8] line 76 dead object in RW_OK(ring_data.buf, sizeof(data_avg_t) /*20ul*/  * (unsigned long int)14): SUCCESS
+[app_main.pointer_primitives.9] line 76 pointer outside object bounds in RW_OK(ring_data.buf, sizeof(data_avg_t) /*20ul*/  * (unsigned long int)14): SUCCESS
+[app_main.pointer_primitives.10] line 76 invalid integer address in RW_OK(ring_data.buf, sizeof(data_avg_t) /*20ul*/  * (unsigned long int)14): SUCCESS
+[app_main.overflow.21] line 79 arithmetic overflow on signed to unsigned type conversion in (uint64_t)2: SUCCESS
+[app_main.overflow.22] line 81 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_x2: SUCCESS
+[app_main.overflow.23] line 81 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)(signed long int)nondet_x2: SUCCESS
+[app_main.overflow.24] line 82 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_x2: SUCCESS
+[app_main.overflow.25] line 82 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)(signed long int)nondet_x2: SUCCESS
+[app_main.assertion.5] line 84 assertion havoc_slice W_OK((void *)dht_pin_arr, nondet_x2): SUCCESS
+[app_main.overflow.26] line 86 arithmetic overflow on unsigned to unsigned type conversion in (uint8_t)nondet_x2: SUCCESS
+[app_main.overflow.27] line 90 arithmetic overflow on signed to unsigned type conversion in (uint8_t)0: SUCCESS
+[app_main.overflow.112] line 90 arithmetic overflow on unsigned + in one + 1: SUCCESS
+[app_main.overflow.28] line 92 arithmetic overflow on signed to unsigned type conversion in (uint16_t)0: SUCCESS
+[app_main.overflow.29] line 93 arithmetic overflow on unsigned + in nondet_sec + 1: SUCCESS
+[app_main.array_bounds.1] line 101 array 'dht_pin_arr' upper bound in dht_pin_arr[(signed long int)nondet_y1]: SUCCESS
+[app_main.array_bounds.2] line 101 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y1]: SUCCESS
+[app_main.overflow.30] line 101 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y1: SUCCESS
+[app_main.overflow.31] line 101 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y1: SUCCESS
+[app_main.array_bounds.3] line 102 array 'dht_pin_arr' upper bound in dht_pin_arr[(signed long int)nondet_y2]: SUCCESS
+[app_main.array_bounds.4] line 102 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y2]: SUCCESS
+[app_main.overflow.32] line 102 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y2: SUCCESS
+[app_main.overflow.33] line 102 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y2: SUCCESS
+[app_main.array_bounds.5] line 109 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y3]: SUCCESS
+[app_main.overflow.34] line 109 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y3: SUCCESS
+[app_main.overflow.35] line 109 arithmetic overflow on signed unary minus in -40: SUCCESS
+[app_main.array_bounds.6] line 110 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y3]: SUCCESS
+[app_main.overflow.36] line 110 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y3: SUCCESS
+[app_main.array_bounds.7] line 111 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y3]: SUCCESS
+[app_main.overflow.37] line 111 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y3: SUCCESS
+[app_main.array_bounds.8] line 112 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y3]: SUCCESS
+[app_main.overflow.38] line 112 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y3: SUCCESS
+[app_main.array_bounds.9] line 114 array 'dht_pin_arr' upper bound in dht_pin_arr[(signed long int)nondet_y3]: SUCCESS
+[app_main.array_bounds.10] line 114 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y3]: SUCCESS
+[app_main.overflow.39] line 114 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y3: SUCCESS
+[app_main.overflow.40] line 114 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y3: SUCCESS
+[app_main.array_bounds.11] line 117 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y1]: SUCCESS
+[app_main.overflow.41] line 117 arithmetic overflow on signed * in (signed long int)ring_buf.front * (signed long int)4ul: SUCCESS
+[app_main.overflow.42] line 117 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y1: SUCCESS
+[app_main.pointer_arithmetic.1] line 117 pointer arithmetic: pointer NULL in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.2] line 117 pointer arithmetic: pointer invalid in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.3] line 117 pointer arithmetic: deallocated dynamic object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.4] line 117 pointer arithmetic: dead object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.5] line 117 pointer arithmetic: pointer outside object bounds in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.6] line 117 pointer arithmetic: invalid integer address in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_dereference.1] line 117 dereference failure: pointer NULL in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_temp: SUCCESS
+[app_main.pointer_dereference.2] line 117 dereference failure: pointer invalid in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_temp: SUCCESS
+[app_main.pointer_dereference.3] line 117 dereference failure: deallocated dynamic object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_temp: SUCCESS
+[app_main.pointer_dereference.4] line 117 dereference failure: dead object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_temp: SUCCESS
+[app_main.pointer_dereference.5] line 117 dereference failure: pointer outside object bounds in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_temp: SUCCESS
+[app_main.pointer_dereference.6] line 117 dereference failure: invalid integer address in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_temp: SUCCESS
+[app_main.array_bounds.12] line 118 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y1]: SUCCESS
+[app_main.overflow.43] line 118 arithmetic overflow on signed * in (signed long int)ring_buf.front * (signed long int)4ul: SUCCESS
+[app_main.overflow.44] line 118 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y1: SUCCESS
+[app_main.pointer_arithmetic.7] line 118 pointer arithmetic: pointer NULL in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.8] line 118 pointer arithmetic: pointer invalid in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.9] line 118 pointer arithmetic: deallocated dynamic object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.10] line 118 pointer arithmetic: dead object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.11] line 118 pointer arithmetic: pointer outside object bounds in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.12] line 118 pointer arithmetic: invalid integer address in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_dereference.7] line 118 dereference failure: pointer NULL in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_humid: SUCCESS
+[app_main.pointer_dereference.8] line 118 dereference failure: pointer invalid in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_humid: SUCCESS
+[app_main.pointer_dereference.9] line 118 dereference failure: deallocated dynamic object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_humid: SUCCESS
+[app_main.pointer_dereference.10] line 118 dereference failure: dead object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_humid: SUCCESS
+[app_main.pointer_dereference.11] line 118 dereference failure: pointer outside object bounds in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_humid: SUCCESS
+[app_main.pointer_dereference.12] line 118 dereference failure: invalid integer address in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->surf_humid: SUCCESS
+[app_main.array_bounds.13] line 119 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y2]: SUCCESS
+[app_main.overflow.45] line 119 arithmetic overflow on signed * in (signed long int)ring_buf.front * (signed long int)4ul: SUCCESS
+[app_main.overflow.46] line 119 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y2: SUCCESS
+[app_main.pointer_arithmetic.13] line 119 pointer arithmetic: pointer NULL in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.14] line 119 pointer arithmetic: pointer invalid in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.15] line 119 pointer arithmetic: deallocated dynamic object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.16] line 119 pointer arithmetic: dead object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.17] line 119 pointer arithmetic: pointer outside object bounds in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.18] line 119 pointer arithmetic: invalid integer address in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_dereference.13] line 119 dereference failure: pointer NULL in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_temp: SUCCESS
+[app_main.pointer_dereference.14] line 119 dereference failure: pointer invalid in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_temp: SUCCESS
+[app_main.pointer_dereference.15] line 119 dereference failure: deallocated dynamic object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_temp: SUCCESS
+[app_main.pointer_dereference.16] line 119 dereference failure: dead object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_temp: SUCCESS
+[app_main.pointer_dereference.17] line 119 dereference failure: pointer outside object bounds in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_temp: SUCCESS
+[app_main.pointer_dereference.18] line 119 dereference failure: invalid integer address in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_temp: SUCCESS
+[app_main.array_bounds.14] line 120 array 'dht_reading_arr' upper bound in dht_reading_arr[(signed long int)nondet_y2]: SUCCESS
+[app_main.overflow.47] line 120 arithmetic overflow on signed * in (signed long int)ring_buf.front * (signed long int)4ul: SUCCESS
+[app_main.overflow.48] line 120 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_y2: SUCCESS
+[app_main.pointer_arithmetic.19] line 120 pointer arithmetic: pointer NULL in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.20] line 120 pointer arithmetic: pointer invalid in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.21] line 120 pointer arithmetic: deallocated dynamic object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.22] line 120 pointer arithmetic: dead object in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.23] line 120 pointer arithmetic: pointer outside object bounds in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_arithmetic.24] line 120 pointer arithmetic: invalid integer address in (sensor_t *)ring_buf.buf + (signed long int)ring_buf.front: SUCCESS
+[app_main.pointer_dereference.19] line 120 dereference failure: pointer NULL in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_humid: SUCCESS
+[app_main.pointer_dereference.20] line 120 dereference failure: pointer invalid in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_humid: SUCCESS
+[app_main.pointer_dereference.21] line 120 dereference failure: deallocated dynamic object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_humid: SUCCESS
+[app_main.pointer_dereference.22] line 120 dereference failure: dead object in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_humid: SUCCESS
+[app_main.pointer_dereference.23] line 120 dereference failure: pointer outside object bounds in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_humid: SUCCESS
+[app_main.pointer_dereference.24] line 120 dereference failure: invalid integer address in ((sensor_t *)ring_buf.buf + (signed long int)ring_buf.front)->amb_humid: SUCCESS
+[app_main.division-by-zero.1] line 123 division by zero in (signed int)nondet_sec % 30: SUCCESS
+[app_main.overflow.49] line 125 arithmetic overflow on signed to unsigned type conversion in (uint16_t)0: SUCCESS
+[app_main.precondition_instance.7] line 127 memset destination region writeable: SUCCESS
+[app_main.overflow.50] line 134 arithmetic overflow on signed - in 8 - 1: SUCCESS
+[app_main.overflow.51] line 134 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)(8 - 1): SUCCESS
+[app_main.overflow.52] line 134 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)0: SUCCESS
+[app_main.assertion.6] line 138 ring_data w: SUCCESS
+[app_main.overflow.53] line 138 arithmetic overflow on signed * in (signed long int)ring_data.front * (signed long int)20ul: SUCCESS
+[app_main.overflow.54] line 138 arithmetic overflow on signed * in (signed long int)nondet_sens_count * (signed long int)1ul: SUCCESS
+[app_main.overflow.55] line 138 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)1: SUCCESS
+[app_main.pointer_arithmetic.25] line 138 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.26] line 138 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.27] line 138 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.28] line 138 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.29] line 138 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.30] line 138 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.31] line 138 pointer arithmetic: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count: SUCCESS
+[app_main.pointer_arithmetic.32] line 138 pointer arithmetic: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count: SUCCESS
+[app_main.pointer_arithmetic.33] line 138 pointer arithmetic: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count: SUCCESS
+[app_main.pointer_arithmetic.34] line 138 pointer arithmetic: dead object in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count: SUCCESS
+[app_main.pointer_arithmetic.35] line 138 pointer arithmetic: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count: SUCCESS
+[app_main.pointer_arithmetic.36] line 138 pointer arithmetic: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count: SUCCESS
+[app_main.pointer_primitives.11] line 138 pointer invalid in W_OK(((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count, (unsigned long int)1): SUCCESS
+[app_main.pointer_primitives.12] line 138 deallocated dynamic object in W_OK(((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count, (unsigned long int)1): SUCCESS
+[app_main.pointer_primitives.13] line 138 dead object in W_OK(((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count, (unsigned long int)1): SUCCESS
+[app_main.pointer_primitives.14] line 138 pointer outside object bounds in W_OK(((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->all[(signed long int)nondet_dur].all + (signed long int)nondet_sens_count, (unsigned long int)1): SUCCESS
+[app_main.assertion.7] line 139 ring_buf r: SUCCESS
+[app_main.overflow.56] line 139 arithmetic overflow on unsigned to signed type conversion in (signed long int)nondet_cur: SUCCESS
+[app_main.overflow.57] line 139 arithmetic overflow on signed * in (signed long int)nondet_cur * (signed long int)4ul: SUCCESS
+[app_main.overflow.58] line 139 arithmetic overflow on signed * in (signed long int)nondet_sens_count2 * (signed long int)1ul: SUCCESS
+[app_main.overflow.59] line 139 arithmetic overflow on signed to unsigned type conversion in (unsigned long int)1: SUCCESS
+[app_main.pointer_arithmetic.37] line 139 pointer arithmetic: pointer NULL in (sensor_t *)ring_buf.buf + (signed long int)nondet_cur: SUCCESS
+[app_main.pointer_arithmetic.38] line 139 pointer arithmetic: pointer invalid in (sensor_t *)ring_buf.buf + (signed long int)nondet_cur: SUCCESS
+[app_main.pointer_arithmetic.39] line 139 pointer arithmetic: deallocated dynamic object in (sensor_t *)ring_buf.buf + (signed long int)nondet_cur: SUCCESS
+[app_main.pointer_arithmetic.40] line 139 pointer arithmetic: dead object in (sensor_t *)ring_buf.buf + (signed long int)nondet_cur: SUCCESS
+[app_main.pointer_arithmetic.41] line 139 pointer arithmetic: pointer outside object bounds in (sensor_t *)ring_buf.buf + (signed long int)nondet_cur: SUCCESS
+[app_main.pointer_arithmetic.42] line 139 pointer arithmetic: invalid integer address in (sensor_t *)ring_buf.buf + (signed long int)nondet_cur: SUCCESS
+[app_main.pointer_arithmetic.43] line 139 pointer arithmetic: pointer NULL in ((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2: SUCCESS
+[app_main.pointer_arithmetic.44] line 139 pointer arithmetic: pointer invalid in ((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2: SUCCESS
+[app_main.pointer_arithmetic.45] line 139 pointer arithmetic: deallocated dynamic object in ((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2: SUCCESS
+[app_main.pointer_arithmetic.46] line 139 pointer arithmetic: dead object in ((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2: SUCCESS
+[app_main.pointer_arithmetic.47] line 139 pointer arithmetic: pointer outside object bounds in ((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2: SUCCESS
+[app_main.pointer_arithmetic.48] line 139 pointer arithmetic: invalid integer address in ((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2: SUCCESS
+[app_main.pointer_primitives.15] line 139 pointer invalid in R_OK(((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2, (unsigned long int)1): SUCCESS
+[app_main.pointer_primitives.16] line 139 deallocated dynamic object in R_OK(((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2, (unsigned long int)1): SUCCESS
+[app_main.pointer_primitives.17] line 139 dead object in R_OK(((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2, (unsigned long int)1): SUCCESS
+[app_main.pointer_primitives.18] line 139 pointer outside object bounds in R_OK(((sensor_t *)ring_buf.buf + (signed long int)nondet_cur)->all + (signed long int)nondet_sens_count2, (unsigned long int)1): SUCCESS
+[app_main.overflow.60] line 145 arithmetic overflow on signed to unsigned type conversion in (uint8_t)0: SUCCESS
+[app_main.overflow.61] line 147 arithmetic overflow on signed to unsigned type conversion in (uint8_t)0: SUCCESS
+[app_main.overflow.62] line 150 arithmetic overflow on signed - in (int64_t)ring_data.front - (int64_t)ring_data.back: SUCCESS
+[app_main.overflow.63] line 154 arithmetic overflow on unsigned to unsigned type conversion in (uint16_t)ring_data.front: SUCCESS
+[app_main.overflow.64] line 156 arithmetic overflow on signed * in (signed long int)tmpcur * (signed long int)20ul: SUCCESS
+[app_main.overflow.65] line 156 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[app_main.pointer_arithmetic.49] line 156 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.50] line 156 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.51] line 156 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.52] line 156 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.53] line 156 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.54] line 156 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_dereference.25] line 156 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.26] line 156 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.27] line 156 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.28] line 156 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.29] line 156 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.30] line 156 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.overflow.66] line 157 arithmetic overflow on unsigned - in tmpcur - 1: SUCCESS
+[app_main.overflow.67] line 157 arithmetic overflow on signed - in 14 - 1: SUCCESS
+[app_main.overflow.68] line 157 arithmetic overflow on signed to unsigned type conversion in (uint16_t)(14 - 1): SUCCESS
+[app_main.overflow.69] line 158 arithmetic overflow on signed * in (signed long int)tmpcur * (signed long int)20ul: SUCCESS
+[app_main.overflow.70] line 158 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[app_main.pointer_arithmetic.55] line 158 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.56] line 158 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.57] line 158 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.58] line 158 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.59] line 158 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.60] line 158 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_dereference.31] line 158 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.32] line 158 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.33] line 158 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.34] line 158 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.35] line 158 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.36] line 158 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.overflow.71] line 159 arithmetic overflow on unsigned - in tmpcur - 1: SUCCESS
+[app_main.overflow.72] line 159 arithmetic overflow on signed - in 14 - 1: SUCCESS
+[app_main.overflow.73] line 159 arithmetic overflow on signed to unsigned type conversion in (uint16_t)(14 - 1): SUCCESS
+[app_main.overflow.74] line 160 arithmetic overflow on signed * in (signed long int)tmpcur * (signed long int)20ul: SUCCESS
+[app_main.overflow.75] line 160 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[app_main.pointer_arithmetic.61] line 160 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.62] line 160 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.63] line 160 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.64] line 160 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.65] line 160 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.66] line 160 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_dereference.37] line 160 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.38] line 160 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.39] line 160 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.40] line 160 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.41] line 160 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.42] line 160 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.overflow.76] line 161 arithmetic overflow on unsigned - in tmpcur - 1: SUCCESS
+[app_main.overflow.77] line 161 arithmetic overflow on signed - in 14 - 1: SUCCESS
+[app_main.overflow.78] line 161 arithmetic overflow on signed to unsigned type conversion in (uint16_t)(14 - 1): SUCCESS
+[app_main.overflow.79] line 162 arithmetic overflow on signed * in (signed long int)tmpcur * (signed long int)20ul: SUCCESS
+[app_main.overflow.80] line 162 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[app_main.pointer_arithmetic.67] line 162 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.68] line 162 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.69] line 162 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.70] line 162 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.71] line 162 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.72] line 162 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_dereference.43] line 162 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.44] line 162 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.45] line 162 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.46] line 162 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.47] line 162 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.48] line 162 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.overflow.81] line 163 arithmetic overflow on unsigned - in tmpcur - 1: SUCCESS
+[app_main.overflow.82] line 163 arithmetic overflow on signed - in 14 - 1: SUCCESS
+[app_main.overflow.83] line 163 arithmetic overflow on signed to unsigned type conversion in (uint16_t)(14 - 1): SUCCESS
+[app_main.overflow.84] line 164 arithmetic overflow on signed * in (signed long int)tmpcur * (signed long int)20ul: SUCCESS
+[app_main.overflow.85] line 164 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[app_main.pointer_arithmetic.73] line 164 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.74] line 164 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.75] line 164 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.76] line 164 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.77] line 164 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.78] line 164 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_dereference.49] line 164 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.50] line 164 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.51] line 164 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.52] line 164 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.53] line 164 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.54] line 164 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.overflow.86] line 165 arithmetic overflow on unsigned - in tmpcur - 1: SUCCESS
+[app_main.overflow.87] line 165 arithmetic overflow on signed - in 14 - 1: SUCCESS
+[app_main.overflow.88] line 165 arithmetic overflow on signed to unsigned type conversion in (uint16_t)(14 - 1): SUCCESS
+[app_main.overflow.89] line 166 arithmetic overflow on signed * in (signed long int)tmpcur * (signed long int)20ul: SUCCESS
+[app_main.overflow.90] line 166 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[app_main.pointer_arithmetic.79] line 166 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.80] line 166 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.81] line 166 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.82] line 166 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.83] line 166 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_arithmetic.84] line 166 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)tmpcur: SUCCESS
+[app_main.pointer_dereference.55] line 166 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.56] line 166 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.57] line 166 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.58] line 166 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.59] line 166 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.pointer_dereference.60] line 166 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)tmpcur)->ice: SUCCESS
+[app_main.overflow.91] line 167 arithmetic overflow on unsigned - in tmpcur - 1: SUCCESS
+[app_main.overflow.92] line 167 arithmetic overflow on signed - in 14 - 1: SUCCESS
+[app_main.overflow.93] line 167 arithmetic overflow on signed to unsigned type conversion in (uint16_t)(14 - 1): SUCCESS
+[app_main.overflow.94] line 174 arithmetic overflow on signed to unsigned type conversion in (uint8_t)1: SUCCESS
+[app_main.overflow.95] line 179 arithmetic overflow on signed * in (signed long int)ring_data.front * (signed long int)20ul: SUCCESS
+[app_main.overflow.96] line 179 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[app_main.pointer_arithmetic.85] line 179 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.86] line 179 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.87] line 179 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.88] line 179 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.89] line 179 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.90] line 179 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_dereference.61] line 179 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.62] line 179 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.63] line 179 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.64] line 179 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.65] line 179 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.66] line 179 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.overflow.97] line 181 arithmetic overflow on signed * in (signed long int)ring_data.front * (signed long int)20ul: SUCCESS
+[app_main.overflow.98] line 181 arithmetic overflow on signed to unsigned type conversion in (uint32_t)0: SUCCESS
+[app_main.pointer_arithmetic.91] line 181 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.92] line 181 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.93] line 181 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.94] line 181 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.95] line 181 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_arithmetic.96] line 181 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)ring_data.front: SUCCESS
+[app_main.pointer_dereference.67] line 181 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.68] line 181 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.69] line 181 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.70] line 181 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.71] line 181 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.pointer_dereference.72] line 181 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)ring_data.front)->ice: SUCCESS
+[app_main.overflow.99] line 188 arithmetic overflow on signed to unsigned type conversion in (unsigned int)5: SUCCESS
+[app_main.overflow.100] line 188 arithmetic overflow on signed to unsigned type conversion in (unsigned int)5: SUCCESS
+[app_main.overflow.101] line 188 arithmetic overflow on unsigned - in ring_data.front - (unsigned int)5: SUCCESS
+[app_main.overflow.102] line 189 arithmetic overflow on signed to unsigned type conversion in (unsigned int)5: SUCCESS
+[app_main.overflow.103] line 191 arithmetic overflow on signed to unsigned type conversion in (unsigned int)14: SUCCESS
+[app_main.overflow.104] line 191 arithmetic overflow on signed to unsigned type conversion in (unsigned int)5: SUCCESS
+[app_main.overflow.105] line 191 arithmetic overflow on unsigned - in (unsigned int)5 - ring_data.front: SUCCESS
+[app_main.overflow.106] line 191 arithmetic overflow on unsigned - in (unsigned int)14 - ((unsigned int)5 - ring_data.front): SUCCESS
+[app_main.overflow.107] line 191 arithmetic overflow on signed - in 14 - 1: SUCCESS
+[app_main.assertion.8] line 194 ice: SUCCESS
+[app_main.overflow.108] line 195 arithmetic overflow on signed * in (signed long int)nondet_z1 * (signed long int)20ul: SUCCESS
+[app_main.overflow.109] line 195 arithmetic overflow on signed to unsigned type conversion in (unsigned int)1: SUCCESS
+[app_main.pointer_arithmetic.97] line 195 pointer arithmetic: pointer NULL in (data_avg_t *)ring_data.buf + (signed long int)nondet_z1: SUCCESS
+[app_main.pointer_arithmetic.98] line 195 pointer arithmetic: pointer invalid in (data_avg_t *)ring_data.buf + (signed long int)nondet_z1: SUCCESS
+[app_main.pointer_arithmetic.99] line 195 pointer arithmetic: deallocated dynamic object in (data_avg_t *)ring_data.buf + (signed long int)nondet_z1: SUCCESS
+[app_main.pointer_arithmetic.100] line 195 pointer arithmetic: dead object in (data_avg_t *)ring_data.buf + (signed long int)nondet_z1: SUCCESS
+[app_main.pointer_arithmetic.101] line 195 pointer arithmetic: pointer outside object bounds in (data_avg_t *)ring_data.buf + (signed long int)nondet_z1: SUCCESS
+[app_main.pointer_arithmetic.102] line 195 pointer arithmetic: invalid integer address in (data_avg_t *)ring_data.buf + (signed long int)nondet_z1: SUCCESS
+[app_main.pointer_dereference.73] line 195 dereference failure: pointer NULL in ((data_avg_t *)ring_data.buf + (signed long int)nondet_z1)->ice: SUCCESS
+[app_main.pointer_dereference.74] line 195 dereference failure: pointer invalid in ((data_avg_t *)ring_data.buf + (signed long int)nondet_z1)->ice: SUCCESS
+[app_main.pointer_dereference.75] line 195 dereference failure: deallocated dynamic object in ((data_avg_t *)ring_data.buf + (signed long int)nondet_z1)->ice: SUCCESS
+[app_main.pointer_dereference.76] line 195 dereference failure: dead object in ((data_avg_t *)ring_data.buf + (signed long int)nondet_z1)->ice: SUCCESS
+[app_main.pointer_dereference.77] line 195 dereference failure: pointer outside object bounds in ((data_avg_t *)ring_data.buf + (signed long int)nondet_z1)->ice: SUCCESS
+[app_main.pointer_dereference.78] line 195 dereference failure: invalid integer address in ((data_avg_t *)ring_data.buf + (signed long int)nondet_z1)->ice: SUCCESS
+[app_main.overflow.110] line 199 arithmetic overflow on signed to unsigned type conversion in (const uint32_t)14: SUCCESS
+[app_main.overflow.111] line 203 arithmetic overflow on signed to unsigned type conversion in (const uint32_t)8: SUCCESS
+[app_main.precondition_instance.8] line 208 free argument must be NULL or valid pointer: SUCCESS
+[app_main.precondition_instance.9] line 208 free argument must be dynamic object: SUCCESS
+[app_main.precondition_instance.10] line 208 free argument has offset zero: SUCCESS
+[app_main.precondition_instance.11] line 208 double free: SUCCESS
+[app_main.precondition_instance.12] line 208 free called for new[] object: SUCCESS
+[app_main.precondition_instance.13] line 208 free called for stack-allocated object: SUCCESS
+[app_main.precondition_instance.14] line 209 free argument must be NULL or valid pointer: SUCCESS
+[app_main.precondition_instance.15] line 209 free argument must be dynamic object: SUCCESS
+[app_main.precondition_instance.16] line 209 free argument has offset zero: SUCCESS
+[app_main.precondition_instance.17] line 209 double free: SUCCESS
+[app_main.precondition_instance.18] line 209 free called for new[] object: SUCCESS
+[app_main.precondition_instance.19] line 209 free called for stack-allocated object: SUCCESS
+
+main.c function ring_increment
+[ring_increment.division-by-zero.1] line 216 division by zero in (ring->front + (unsigned int)1) % size: SUCCESS
+[ring_increment.overflow.1] line 216 arithmetic overflow on signed to unsigned type conversion in (unsigned int)1: SUCCESS
+[ring_increment.overflow.2] line 216 arithmetic overflow on unsigned + in ring->front + (unsigned int)1: SUCCESS
+[ring_increment.pointer_dereference.1] line 216 dereference failure: pointer NULL in ring->front: SUCCESS
+[ring_increment.pointer_dereference.2] line 216 dereference failure: pointer invalid in ring->front: SUCCESS
+[ring_increment.pointer_dereference.3] line 216 dereference failure: deallocated dynamic object in ring->front: SUCCESS
+[ring_increment.pointer_dereference.4] line 216 dereference failure: dead object in ring->front: SUCCESS
+[ring_increment.pointer_dereference.5] line 216 dereference failure: pointer outside object bounds in ring->front: SUCCESS
+[ring_increment.pointer_dereference.6] line 216 dereference failure: invalid integer address in ring->front: SUCCESS
+[ring_increment.pointer_dereference.7] line 217 dereference failure: pointer NULL in ring->full: SUCCESS
+[ring_increment.pointer_dereference.8] line 217 dereference failure: pointer invalid in ring->full: SUCCESS
+[ring_increment.pointer_dereference.9] line 217 dereference failure: deallocated dynamic object in ring->full: SUCCESS
+[ring_increment.pointer_dereference.10] line 217 dereference failure: dead object in ring->full: SUCCESS
+[ring_increment.pointer_dereference.11] line 217 dereference failure: pointer outside object bounds in ring->full: SUCCESS
+[ring_increment.pointer_dereference.12] line 217 dereference failure: invalid integer address in ring->full: SUCCESS
+[ring_increment.pointer_dereference.13] line 218 dereference failure: pointer NULL in ring->back: SUCCESS
+[ring_increment.pointer_dereference.14] line 218 dereference failure: pointer invalid in ring->back: SUCCESS
+[ring_increment.pointer_dereference.15] line 218 dereference failure: deallocated dynamic object in ring->back: SUCCESS
+[ring_increment.pointer_dereference.16] line 218 dereference failure: dead object in ring->back: SUCCESS
+[ring_increment.pointer_dereference.17] line 218 dereference failure: pointer outside object bounds in ring->back: SUCCESS
+[ring_increment.pointer_dereference.18] line 218 dereference failure: invalid integer address in ring->back: SUCCESS
+[ring_increment.pointer_dereference.19] line 218 dereference failure: pointer NULL in ring->front: SUCCESS
+[ring_increment.pointer_dereference.20] line 218 dereference failure: pointer invalid in ring->front: SUCCESS
+[ring_increment.pointer_dereference.21] line 218 dereference failure: deallocated dynamic object in ring->front: SUCCESS
+[ring_increment.pointer_dereference.22] line 218 dereference failure: dead object in ring->front: SUCCESS
+[ring_increment.pointer_dereference.23] line 218 dereference failure: pointer outside object bounds in ring->front: SUCCESS
+[ring_increment.pointer_dereference.24] line 218 dereference failure: invalid integer address in ring->front: SUCCESS
+[ring_increment.pointer_dereference.25] line 219 dereference failure: pointer NULL in ring->front: SUCCESS
+[ring_increment.pointer_dereference.26] line 219 dereference failure: pointer invalid in ring->front: SUCCESS
+[ring_increment.pointer_dereference.27] line 219 dereference failure: deallocated dynamic object in ring->front: SUCCESS
+[ring_increment.pointer_dereference.28] line 219 dereference failure: dead object in ring->front: SUCCESS
+[ring_increment.pointer_dereference.29] line 219 dereference failure: pointer outside object bounds in ring->front: SUCCESS
+[ring_increment.pointer_dereference.30] line 219 dereference failure: invalid integer address in ring->front: SUCCESS
+[ring_increment.pointer_dereference.31] line 219 dereference failure: pointer NULL in ring->back: SUCCESS
+[ring_increment.pointer_dereference.32] line 219 dereference failure: pointer invalid in ring->back: SUCCESS
+[ring_increment.pointer_dereference.33] line 219 dereference failure: deallocated dynamic object in ring->back: SUCCESS
+[ring_increment.pointer_dereference.34] line 219 dereference failure: dead object in ring->back: SUCCESS
+[ring_increment.pointer_dereference.35] line 219 dereference failure: pointer outside object bounds in ring->back: SUCCESS
+[ring_increment.pointer_dereference.36] line 219 dereference failure: invalid integer address in ring->back: SUCCESS
+[ring_increment.overflow.3] line 220 arithmetic overflow on signed to unsigned type conversion in (uint32_t)1: SUCCESS
+[ring_increment.pointer_dereference.37] line 220 dereference failure: pointer NULL in ring->full: SUCCESS
+[ring_increment.pointer_dereference.38] line 220 dereference failure: pointer invalid in ring->full: SUCCESS
+[ring_increment.pointer_dereference.39] line 220 dereference failure: deallocated dynamic object in ring->full: SUCCESS
+[ring_increment.pointer_dereference.40] line 220 dereference failure: dead object in ring->full: SUCCESS
+[ring_increment.pointer_dereference.41] line 220 dereference failure: pointer outside object bounds in ring->full: SUCCESS
+[ring_increment.pointer_dereference.42] line 220 dereference failure: invalid integer address in ring->full: SUCCESS
+
+** 0 of 595 failed (1 iterations)
+VERIFICATION SUCCESSFUL

@@ -22,13 +22,13 @@
  * SOFTWARE.
 */
 
-#include "esp_timer.h"
-#include "driver/gpio.h"
-#include "rom/ets_sys.h"
 //#include "freertos/FreeRTOS.h"
 //#include "freertos/task.h"
 
 #include "dht11.h"
+#include <stdint.h>
+
+#define DHT_COUNT 2
 
 /*static gpio_num_t dht_gpio;
 static int64_t last_read_time = -2000000;
@@ -36,51 +36,42 @@ static struct dht11_reading last_read;*/
 
 typedef struct
 {
-    gpio_num_t dht_gpio;
+    uint8_t dht_gpio;
     int64_t last_read_time;
     struct dht11_reading last_read;
 } dht_arr_t;
 
-#define DHT_COUNT 2
+dht_arr_t* dht_arr;
 
-dht_arr_t dht_arr[DHT_COUNT];
+
+uint8_t dht_stack[DHT_COUNT * sizeof(dht_arr_t)];
+
 
 static int _waitOrTimeout(uint16_t microSeconds, int level, uint8_t select) {
-    int micros_ticks = 0;
-    while(gpio_get_level(dht_arr[select].dht_gpio) == level) { 
-        if(micros_ticks++ > microSeconds) 
-            return DHT11_TIMEOUT_ERROR;
-        ets_delay_us(1);
-    }
-    return micros_ticks;
+    int nondet_micros_ticks;
+    __CPROVER_assume( 0 <= nondet_micros_ticks );
+
+    int nondet_x;
+
+    if(nondet_x) return nondet_micros_ticks;
+    else return DHT11_TIMEOUT_ERROR;
 }
 
 static int _checkCRC(uint8_t data[]) {
-    if(data[4] == (data[0] + data[1] + data[2] + data[3]))
-        return DHT11_OK;
-    else
-        return DHT11_CRC_ERROR;
+    
+    int nondet_x;
+    if(nondet_x) return DHT11_OK;
+    else return DHT11_CRC_ERROR;
 }
 
-static void _sendStartSignal(uint8_t select) {
-    gpio_set_direction(dht_arr[select].dht_gpio, GPIO_MODE_OUTPUT);
-    gpio_set_level(dht_arr[select].dht_gpio, 0);
-    ets_delay_us(20 * 1000);
-    gpio_set_level(dht_arr[select].dht_gpio, 1);
-    ets_delay_us(40);
-    gpio_set_direction(dht_arr[select].dht_gpio, GPIO_MODE_INPUT);
-}
+static void _sendStartSignal(uint8_t select) {}
 
 static int _checkResponse(uint8_t select) {
-    /* Wait for next step ~80us*/
-    if(_waitOrTimeout(80, 0, select) == DHT11_TIMEOUT_ERROR)
-        return DHT11_TIMEOUT_ERROR;
+   
+    int nondet_x;
+    if(nondet_x) return DHT11_OK;
+    else return DHT11_TIMEOUT_ERROR;
 
-    /* Wait for next step ~80us*/
-    if(_waitOrTimeout(80, 1, select) == DHT11_TIMEOUT_ERROR) 
-        return DHT11_TIMEOUT_ERROR;
-
-    return DHT11_OK;
 }
 
 static struct dht11_reading _timeoutError() {
@@ -94,40 +85,47 @@ static struct dht11_reading _crcError() {
 }
 
 void DHT11_init(uint8_t gpio_num[], uint8_t count) {
-    /* Wait 1 seconds to make the device pass its initial unstable status */
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-    
+
+    __CPROVER_assume( __CPROVER_r_ok( gpio_num, count ) );
+
+    memset(dht_stack, 0, DHT_COUNT * sizeof(dht_arr_t));
+
+    /*dht_arr = malloc(count * sizeof(dht_arr_t));
+    if(dht_arr == 0)
+    {
+        printf("dht11 malloc fail\n");
+        abort();
+    }*/
+    dht_arr = (dht_arr_t*)(&dht_stack[0]);
     for(uint8_t i = 0; i < count && i < DHT_COUNT; i++)
         dht_arr[i].dht_gpio = gpio_num[i];
-
 }
 
 struct dht11_reading DHT11_read(uint8_t select) {
-    /* Tried to sense too son since last read (dht11 needs ~2 seconds to make a new read) */
-    if(esp_timer_get_time() - 2000000 < dht_arr[select].last_read_time) {
-        return dht_arr[select].last_read;
-    }
 
-    dht_arr[select].last_read_time = esp_timer_get_time();
+    __CPROVER_assume( select == 0 || select == 1 );
+
+    /* Tried to sense too son since last read (dht11 needs ~2 seconds to make a new read) */
+    
+    int64_t nondet_cur_time;
+    __CPROVER_assume( (0 <= nondet_cur_time) && (nondet_cur_time <= INT32_MAX) );
+    
+    int nondet_x;
+    if(nondet_x) return dht_arr[select].last_read;
+
+    __CPROVER_assume( dht_arr[select].last_read_time < nondet_cur_time );
+    dht_arr[select].last_read_time = nondet_cur_time;
 
     uint8_t data[5] = {0,0,0,0,0};
-
-    _sendStartSignal(select);
 
     if(_checkResponse(select) == DHT11_TIMEOUT_ERROR)
         return dht_arr[select].last_read = _timeoutError();
     
-    /* Read response */
-    for(int i = 0; i < 40; i++) {
-        /* Initial data */
-        if(_waitOrTimeout(50, 0, select) == DHT11_TIMEOUT_ERROR)
-            return dht_arr[select].last_read = _timeoutError();
-                
-        if(_waitOrTimeout(70, 1, select) > 28) {
-            /* Bit received was a 1 */
-            data[i/8] |= (1 << (7-(i%8)));
-        }
-    }
+    
+    if(_waitOrTimeout(50, 0, select) == DHT11_TIMEOUT_ERROR)
+        return dht_arr[select].last_read = _timeoutError();
+    
+    __CPROVER_havoc_slice(data, 5);
 
     if(_checkCRC(data) != DHT11_CRC_ERROR) {
         dht_arr[select].last_read.status = DHT11_OK;

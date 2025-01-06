@@ -6,24 +6,22 @@
 #include "lwip/sockets.h"
 #include "esp_random.h"
 #include "dht11/dht11.c"
-#include "Logistic-Regression/regression/logistic.c"
-#include "Logistic-Regression/numerical/matrix.c"
-#include "Logistic-Regression/preprocessing/scaler.c"
+#include "lr.c"
 
 #define TSC_I2C_ADDR 0x29
 
 #define SENSOR_COUNT 4
 typedef struct
 {
-	uint8_t all[0];
+	int8_t all[0];
 	//uint16_t r;
 	//uint16_t g;
 	//uint16_t b;
 	//uint16_t c;
-	uint8_t surf_temp;
-	uint8_t surf_humid;
-	uint8_t amb_temp;
-	uint8_t amb_humid;
+	int8_t surf_temp;
+	int8_t surf_humid;
+	int8_t amb_temp;
+	int8_t amb_humid;
 } sensor_t;
 
 typedef struct
@@ -33,10 +31,10 @@ typedef struct
 	//uint32_t g;
 	//uint32_t b;
 	//uint32_t c;
-	uint32_t surf_temp;
-	uint32_t surf_humid;
-	uint32_t amb_temp;
-	uint32_t amb_humid;
+	int32_t surf_temp;
+	int32_t surf_humid;
+	int32_t amb_temp;
+	int32_t amb_humid;
 } sensor_sum_t;
 
 #define DUR_COUNT 4
@@ -83,11 +81,11 @@ static void f_buttonpressed(void*);
 
 void app_main(void)
 {
-	gpio_set_direction(BUTTON_PIN, GPIO_MODE_INPUT);
-	gpio_set_pull_mode(BUTTON_PIN, GPIO_PULLUP_ONLY);
+	ESP_ERROR_CHECK( gpio_set_direction(BUTTON_PIN, GPIO_MODE_INPUT) );
+	ESP_ERROR_CHECK( gpio_set_pull_mode(BUTTON_PIN, GPIO_PULLUP_ONLY) );
 	TaskHandle_t f_buttonpressed_taskhandle;
-	xTaskCreate(f_buttonpressed, "buttontask", configMINIMAL_STACK_SIZE * 2, NULL, uxTaskPriorityGet(NULL), &f_buttonpressed_taskhandle);
-
+	BaseType_t r = xTaskCreate(f_buttonpressed, "buttontask", configMINIMAL_STACK_SIZE * 2, NULL, uxTaskPriorityGet(NULL), &f_buttonpressed_taskhandle);
+	if(r != pdPASS) abort();
 
     /*i2c_master_bus_handle_t bus_handler;
 
@@ -144,12 +142,9 @@ void app_main(void)
 	ringbuf_t ring_buf, ring_data;
 	memset(&ring_buf, 0, sizeof(ringbuf_t));
 	memset(&ring_data, 0, sizeof(ringbuf_t));
-	heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
 	ring_buf.buf = malloc(sizeof(sensor_t) * RING_BUF_SIZE);
-	heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
 
 	ring_data.buf = malloc(sizeof(data_avg_t) * RING_DATA_SIZE);
-	heap_caps_print_heap_info(MALLOC_CAP_DEFAULT);
 
 
 	if(ring_data.buf == 0 || ring_buf.buf == 0)
@@ -172,27 +167,33 @@ void app_main(void)
 	//dht surf + amb
 
 	
-	struct dht11_reading dht11_surf, dht11_amb, dht11_surf_old, dht11_amb_old;
+	struct dht11_reading dht11_surf, dht11_amb;
 	#define DHT11_SURF_PIN 32
 	#define DHT11_AMB_PIN 33
 	#define DHT11_SURF 0
 	#define DHT11_AMB 1
-	DHT11_init((gpio_num_t[]){DHT11_SURF_PIN, DHT11_AMB_PIN}, 2);
+	DHT11_init((uint8_t[]){DHT11_SURF_PIN, DHT11_AMB_PIN}, 2);
 	usleep(10*1000);
 
+	double model_data[] = {0.56, 1.27};
 	double ss_mean[] = {30.804878, 44.795122};
 	double ss_std[] = {2.022067, 23.898504};
-	const StandardScaler ss = {.mean = ss_mean, .std = ss_std};
-	Matrix W = zeros(2, 1);
-	Matrix b = zeros(1, 1);
-	
-	
-	W.data[0][0] = 0.56;
-	W.data[1][0] = 1.27;
-	b.data[0][0] = -2.39;
 
-	const Model trained_model = {.ss = ss, .W = W, .b = b};
-	Matrix inmatrix = zeros(1,2);
+	model_t model =
+	{
+		.W = {
+				.data = model_data,
+				.size = sizeof(model_data) / sizeof(double)
+			},
+		.ss = {
+				.mean = ss_mean,
+				.std = ss_std
+			}
+	};
+	
+	
+	//b.data[0][0] = -2.39;
+
 
 	/*while(1)
 	{
@@ -216,7 +217,7 @@ void app_main(void)
 	
 	
 	uint16_t sec = 0 /*, rgbc[4]*/;
-	uint8_t start, icepresent = 0;
+	uint8_t icepresent = 0;
 
 	for(; ;)
 	{
@@ -244,14 +245,22 @@ void app_main(void)
 		
 		dht11_surf = DHT11_read(DHT11_SURF);
 		dht11_amb = DHT11_read(DHT11_AMB);
-		while(dht11_surf.temperature < 0)
+		while(
+				dht11_surf.temperature < -40 || 
+				dht11_surf.temperature > 60 || /*it should never go beyond this*/
+				dht11_surf.humidity < 0 || 
+				dht11_surf.humidity > 100)
 		{
 			printf("dht11_surf val err\n");
 			usleep(1000 * 1000);
 			dht11_surf = DHT11_read(DHT11_SURF);
 		}
 		
-		while(dht11_amb.temperature < 0)
+		while(
+				dht11_amb.temperature < -40 || 
+				dht11_amb.temperature > 60 ||
+				dht11_amb.humidity < 0 || 
+				dht11_amb.humidity > 100)
 		{
 			printf("dht11_amb val err\n");
 			usleep(1000 * 1000);
@@ -259,7 +268,7 @@ void app_main(void)
 		
 		}
 
-		printf("========\n%03u,%03u %03u,%03u ice:%u\n", dht11_surf.temperature, dht11_surf.humidity, dht11_amb.temperature, dht11_amb.humidity, icepresent);
+		//printf("========\n%03u,%03u %03u,%03u ice:%u\n", dht11_surf.temperature, dht11_surf.humidity, dht11_amb.temperature, dht11_amb.humidity, icepresent);
 		
 		((sensor_t*)ring_buf.buf)[ring_buf.front].surf_temp = dht11_surf.temperature;
 		((sensor_t*)ring_buf.buf)[ring_buf.front].surf_humid = dht11_surf.humidity;
@@ -379,15 +388,15 @@ out_of_for:
 
 		ring_increment(&ring_buf, &mutex_buf, RING_BUF_SIZE);
 
-		inmatrix.data[0][0] = (double)dht11_surf.temperature;
-		inmatrix.data[0][1] = (double)dht11_surf.humidity;
-		const Matrix surf_predict = predict(trained_model, inmatrix);
-		inmatrix.data[0][0] = (double)dht11_amb.temperature;
-		inmatrix.data[0][1] = (double)dht11_amb.humidity;
-		const Matrix amb_predict = predict(trained_model, inmatrix);
-		printf("surf predict:%u amb predict:%u\n========\n",(uint8_t)surf_predict.data[0][0],(uint8_t)amb_predict.data[0][0]);
-		dispose(surf_predict);
-		dispose(amb_predict);
+		double sensor_read[2];
+		sensor_read[0] = (double)dht11_surf.temperature;
+		sensor_read[1] = (double)dht11_surf.humidity;
+		uint8_t prediction_surf = predict(model, sensor_read);
+		sensor_read[0] = (double)dht11_amb.temperature;
+		sensor_read[1] = (double)dht11_amb.humidity;
+		uint8_t prediction_amb = predict(model, sensor_read);
+		printf("%u,%u,%u %u,%u,%u\n========\n",dht11_surf.temperature, dht11_surf.humidity, prediction_surf,
+												dht11_amb.temperature, dht11_amb.humidity, prediction_amb);
 
 	}
 	
