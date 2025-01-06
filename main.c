@@ -330,7 +330,7 @@ out_of_for:
 					icepresent = 0;
 				else
 				{
-					if(ring_data.front-ring_data.back < 6)
+					if((int64_t)ring_data.front-(int64_t)ring_data.back < 6)
 						printf("no backwards\n");
 					else
 					{
